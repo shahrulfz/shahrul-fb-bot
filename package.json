@@ -1,0 +1,16 @@
+{
+  "name": "shahrul-fb-bot",
+  "version": "1.0.0",
+  "description": "facebook messenger bot with webhooks",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2"
+  }
+}
