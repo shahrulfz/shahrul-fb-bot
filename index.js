@@ -116,7 +116,7 @@ app.post('/', (req, res) => {
         console.log("Accessing index")
         // Parse the request body from the POST
         let body = req.body;
-
+        console.log(body)
         // Check the webhook event is from a Page subscription
         if (body.object === 'page') {
 
@@ -132,6 +132,7 @@ app.post('/', (req, res) => {
 
                 if (webhook_event.message) {
                     console.log('test')
+                    console.log(webhook_event.message)
                     let text = webhook_event.message.text.toLowerCase().split(" ");
                     let checkDesc = text.indexOf("desc");
                     let checkPrice = text.indexOf("price");

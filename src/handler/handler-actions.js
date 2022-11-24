@@ -9,6 +9,7 @@ function handleMessage(sender_psid, received_message) {
     console.log('handleMessage')
     let response;
     console.log(received_message)
+    console.log("b");
     if (received_message.text) {
       console.log(received_message.text)
       for (const file of files) {
