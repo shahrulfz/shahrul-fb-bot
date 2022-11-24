@@ -116,7 +116,7 @@ app.post('/', (req, res) => {
         console.log("Accessing index")
         // Parse the request body from the POST
         let body = req.body;
-        console.log(body)
+
         // Check the webhook event is from a Page subscription
         if (body.object === 'page') {
 
@@ -131,8 +131,6 @@ app.post('/', (req, res) => {
                 // Check if the event is a message or postback and
 
                 if (webhook_event.message) {
-                    console.log('test')
-                    console.log(webhook_event.message)
                     let text = webhook_event.message.text.toLowerCase().split(" ");
                     let checkDesc = text.indexOf("desc");
                     let checkPrice = text.indexOf("price");
@@ -181,26 +179,20 @@ app.post('/', (req, res) => {
                         }
                     }
 
-                    console.log('fetch')
-                    try {
-                        fetch('https://graph.facebook.com/v2.6/me/messages?access_token=' + process.env.PAGE_ACCESS_TOKEN, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(getResult),
+                    fetch('https://graph.facebook.com/v2.6/me/messages?access_token=' + process.env.PAGE_ACCESS_TOKEN, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(getResult),
+                    })
+                        .then((response) => response.json())
+                        .then((data) => {
+                            console.log('Success:', data);
                         })
-                            .then((response) => response.json())
-                            .then((data) => {
-                                console.log('Success:', data);
-                            })
-                            .catch((error) => {
-                                console.error('Error:', error);
-                            });
-                    }
-                    catch (err) {
-                        console.error(err);
-                    }
+                        .catch((error) => {
+                            console.error('Error:', error);
+                        });
                 } else if (webhook_event.postback) {
                     // no handling postback
                     res.sendStatus(404);
