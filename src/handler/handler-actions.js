@@ -8,7 +8,7 @@ function handleMessage(sender_psid, received_message) {
   try {
     console.log('handleMessage')
     let response;
-
+    console.log(received_message)
     if (received_message.text) {
       console.log(received_message.text)
       for (const file of files) {
