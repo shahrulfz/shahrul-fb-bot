@@ -1,10 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const config = require('./config/config.json');
-
-// post data
-const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+const fetch = require('node-fetch');
 
 require('dotenv').config();
 
@@ -115,18 +112,16 @@ app.post('/task2', (req, res) => {
         res.sendStatus(404);
     }
 })
-app.post('/', async (req, res) => {
+app.post('/', (req, res) => {
     try {
         console.log("Accessing index")
         // Parse the request body from the POST
         let body = req.body;
-
         // Check the webhook event is from a Page subscription
         if (body.object === 'page') {
 
             // Iterate over each entry - there may be multiple if batched
             body.entry.forEach(async function (entry) {
-
                 // Gets the body of the webhook event
                 let webhook_event = entry.messaging[0];
                 // Get the sender PSID
@@ -191,8 +186,8 @@ app.post('/', async (req, res) => {
                         },
                         body: JSON.stringify(getResult),
                     }
-                    
-                    fetch(url, options)
+
+                    await fetch(url, options)
                         .then((response) => response.json())
                         .then((data) => {
                             console.log('Success:', data);
@@ -202,9 +197,7 @@ app.post('/', async (req, res) => {
                         });
 
                     try {
-                        let response = await fetch(url, options);
-                        response = await response.json();
-                        res.status(200).json(response);
+                        res.status(200).json("EVENT_RECEIVED");
                     } catch (err) {
                         console.log(err);
                         res.status(500).json({ msg: `Internal Server Error.` });
