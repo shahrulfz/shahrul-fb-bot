@@ -1,7 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-var config = require('./config/config.json');
+const config = require('./config/config.json');
+require('dotenv').config();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -83,7 +84,7 @@ app.post('/', (req, res) => {
                         }
                     }
 
-                    fetch('https://graph.facebook.com/v2.6/me/messages?access_token=' + config.PAGE_ACCESS_TOKEN, {
+                    fetch('https://graph.facebook.com/v2.6/me/messages?access_token=' + process.env.PAGE_ACCESS_TOKEN, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

@@ -1,7 +1,6 @@
-var config = require('../../config/config.json');
+const config = require('../../config/config.json');
 
 const authenticateWebhook = (req, res) => {
-
     try {
         let mode = req.query['hub.mode'];
         let token = req.query['hub.verify_token'];

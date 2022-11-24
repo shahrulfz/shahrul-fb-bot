@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require("path");
-
+const sendEmail = require('../services/send-email');
 const PRODUCT_DATA = require('../sample-data.json');
 const files = fs.readdirSync(path.join(__dirname, "..", "chat-responses"));
 
@@ -82,10 +82,12 @@ function handleBuy(sender_psid, getProductID) {
 
     if (getProductIndex != -1) {
       const productDetails = PRODUCT_DATA[getProductIndex];
-      response = "Your " + productDetails.name + " will be ship soon. We will contact you....."
+      response = "Your " + productDetails.name + " will be ship soon. We will contact you.....";
+      productDetails.buyerID = sender_psid;
+      sendEmail(productDetails)
     }
     else {
-      response = "Sorry, we cannot find what you are looking for. Please try again."
+      response = "Sorry, we cannot find what you are looking for. Please try again.";
     }
 
     response = {
