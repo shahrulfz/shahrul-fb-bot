@@ -2,6 +2,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const config = require('./config/config.json');
+
+// post data
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+
 require('dotenv').config();
 
 app.use(bodyParser.json());
@@ -111,7 +115,7 @@ app.post('/task2', (req, res) => {
         res.sendStatus(404);
     }
 })
-app.post('/', (req, res) => {
+app.post('/', async (req, res) => {
     try {
         console.log("Accessing index")
         // Parse the request body from the POST
@@ -121,7 +125,7 @@ app.post('/', (req, res) => {
         if (body.object === 'page') {
 
             // Iterate over each entry - there may be multiple if batched
-            body.entry.forEach(function (entry) {
+            body.entry.forEach(async function (entry) {
 
                 // Gets the body of the webhook event
                 let webhook_event = entry.messaging[0];
@@ -193,12 +197,21 @@ app.post('/', (req, res) => {
                         .catch((error) => {
                             console.error('Error:', error);
                         });
+
+                    try {
+                        let response = await fetch(url, options);
+                        response = await response.json();
+                        res.status(200).json(response);
+                    } catch (err) {
+                        console.log(err);
+                        res.status(500).json({ msg: `Internal Server Error.` });
+                    }
                 } else if (webhook_event.postback) {
-                    // no handling postback
+                    // not handling postback
                     res.sendStatus(404);
+                    return;
                 }
             });
-            res.status(200).send('EVENT_RECEIVED');
 
         } else {
             res.sendStatus(404);
