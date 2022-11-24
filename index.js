@@ -131,6 +131,7 @@ app.post('/', (req, res) => {
                 // Check if the event is a message or postback and
 
                 if (webhook_event.message) {
+                    console.log('test')
                     let text = webhook_event.message.text.toLowerCase().split(" ");
                     let checkDesc = text.indexOf("desc");
                     let checkPrice = text.indexOf("price");

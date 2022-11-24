@@ -6,6 +6,7 @@ const files = fs.readdirSync(path.join(__dirname, "..", "chat-responses"));
 
 function handleMessage(sender_psid, received_message) {
   try {
+    console.log('handleMessage')
     let response;
 
     if (received_message.text) {
