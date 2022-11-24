@@ -181,20 +181,26 @@ app.post('/', (req, res) => {
                         }
                     }
 
-                    fetch('https://graph.facebook.com/v2.6/me/messages?access_token=' + process.env.PAGE_ACCESS_TOKEN, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(getResult),
-                    })
-                        .then((response) => response.json())
-                        .then((data) => {
-                            console.log('Success:', data);
+                    console.log('fetch')
+                    try {
+                        fetch('https://graph.facebook.com/v2.6/me/messages?access_token=' + process.env.PAGE_ACCESS_TOKEN, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(getResult),
                         })
-                        .catch((error) => {
-                            console.error('Error:', error);
-                        });
+                            .then((response) => response.json())
+                            .then((data) => {
+                                console.log('Success:', data);
+                            })
+                            .catch((error) => {
+                                console.error('Error:', error);
+                            });
+                    }
+                    catch (err) {
+                        console.error(err);
+                    }
                 } else if (webhook_event.postback) {
                     // no handling postback
                     res.sendStatus(404);
