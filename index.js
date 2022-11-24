@@ -183,13 +183,16 @@ app.post('/', async (req, res) => {
                         }
                     }
 
-                    fetch('https://graph.facebook.com/v2.6/me/messages?access_token=' + process.env.PAGE_ACCESS_TOKEN, {
+                    const url = 'https://graph.facebook.com/v2.6/me/messages?access_token=' + process.env.PAGE_ACCESS_TOKEN;
+                    const options = {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify(getResult),
-                    })
+                    }
+                    
+                    fetch(url, options)
                         .then((response) => response.json())
                         .then((data) => {
                             console.log('Success:', data);
