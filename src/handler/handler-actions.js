@@ -10,7 +10,7 @@ function handleMessage(sender_psid, received_message) {
     let response;
 
     if (received_message.text) {
-
+      console.log(received_message.text)
       for (const file of files) {
         let data = fs.readFileSync(path.join(__dirname, "..", "chat-responses", file));
         data = JSON.parse(data);
@@ -19,7 +19,7 @@ function handleMessage(sender_psid, received_message) {
         const isFound = data.questions.some(question => {
           return question.toLowerCase() === received_message.text.toLowerCase();
         });
-
+        console.log({isFound})
         if (isFound) {
           response = data.answers[Math.floor(Math.random() * data.answers.length)];
         }
