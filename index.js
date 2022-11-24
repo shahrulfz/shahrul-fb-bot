@@ -17,6 +17,7 @@ app.get('/bot', function (req, res) {
 
 app.post('/', (req, res) => {
     try {
+        console.log("Accessing index")
         // Parse the request body from the POST
         let body = req.body;
 
@@ -32,9 +33,56 @@ app.post('/', (req, res) => {
                 let sender_psid = webhook_event.sender.id;
 
                 // Check if the event is a message or postback and
-                // Task 1
+
                 if (webhook_event.message) {
-                    const getResult = handlerActions.handleMessage(sender_psid, webhook_event.message);
+                    let text = webhook_event.message.text.toLowerCase().split(" ");
+                    let checkDesc = text.indexOf("desc");
+                    let checkPrice = text.indexOf("price");
+                    let checkShipping = text.indexOf("shipping");
+                    let checkBuy = text.indexOf("buy");
+                    let action;
+                    let getResult;
+                    let getProductID;
+                    
+                    if (checkBuy != -1) {
+                        action = "buy";
+                        getProductID = (checkBuy !== -1) ? text[checkBuy + 1] : null;
+                    }
+                    else if (checkDesc != -1) {
+                        action = "desc";
+                        getProductID = (checkDesc !== -1) ? text[checkDesc + 1] : null;
+                    }
+                    else if (checkPrice != -1) {
+                        action = "price";
+                        getProductID = (checkPrice !== -1) ? text[checkPrice + 1] : null;
+                    }
+                    else if (checkShipping != -1) {
+                        action = "shipping";
+                        getProductID = (checkShipping !== -1) ? text[checkShipping + 1] : null;
+                    }
+
+                    // Task 1 - For simple greetings
+                    if (!action) {
+                        getResult = handlerActions.handleMessage(sender_psid, webhook_event.message);
+                    }
+                    // Task 2
+                    else {
+                        if (action && action !== "buy") {
+                            getResult = handlerActions.handleProduct(sender_psid, getProductID, action);
+                        }
+                        else if (action === "buy") {
+                            getResult = handlerActions.handleBuy(sender_psid, getProductID);
+                        }
+                        else {
+                            getResult = {
+                                "recipient": {
+                                    "id": sender_psid
+                                },
+                                "message": "Sorry, we cannot find what you are looking for. Please try again."
+                            };
+                        }
+                    }
+
                     fetch('https://graph.facebook.com/v2.6/me/messages?access_token=' + config.PAGE_ACCESS_TOKEN, {
                         method: 'POST',
                         headers: {
@@ -61,7 +109,7 @@ app.post('/', (req, res) => {
         }
     }
     catch (err) {
-        console.log(err);
+        console.log("Error found:", err);
         res.sendStatus(404);
     }
 });
