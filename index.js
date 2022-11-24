@@ -16,6 +16,101 @@ app.get('/bot', function (req, res) {
     res.send("Shahrul bot!");
 });
 
+app.get('/task2', function (req, res) {
+    res.status(200).send("Please use POST to this path. Sample data: " + JSON.stringify([
+        {
+            "id": 3,
+            "sourceAccount": "A",
+            "targetAccount": "B",
+            "amount": 100,
+            "category": "eating_out",
+            "time": "2018-03-02T10:34:30.000Z"
+        },
+        {
+            "id": 1,
+            "sourceAccount": "A",
+            "targetAccount": "B",
+            "amount": 100,
+            "category": "eating_out",
+            "time": "2018-03-02T10:33:00.000Z"
+        },
+        {
+            "id": 6,
+            "sourceAccount": "A",
+            "targetAccount": "C",
+            "amount": 250,
+            "category": "other",
+            "time": "2018-03-02T10:33:05.000Z"
+        },
+        {
+            "id": 4,
+            "sourceAccount": "A",
+            "targetAccount": "B",
+            "amount": 100,
+            "category": "eating_out",
+            "time": "2018-03-02T10:36:00.000Z"
+        },
+        {
+            "id": 2,
+            "sourceAccount": "A",
+            "targetAccount": "B",
+            "amount": 100,
+            "category": "eating_out",
+            "time": "2018-03-02T10:33:50.000Z"
+        },
+        {
+            "id": 5,
+            "sourceAccount": "A",
+            "targetAccount": "C",
+            "amount": 250,
+            "category": "other",
+            "time": "2018-03-02T10:33:00.000Z"
+        }
+    ]));
+});
+
+function custom_sort(a, b) {
+    return new Date(a.time).getTime() - new Date(b.time).getTime();
+}
+
+function itemToHash(item) {
+    return `${item.sourceAccount}#${item.targetAccount}#${item.category}#${item.amount}`;
+}
+
+function findDuplicateTransactions(transactions = []) {
+    let sortedArray = transactions.sort(custom_sort);
+    const hashedItems = {};
+
+    for (let i = 0; i < sortedArray.length; i++) {
+        const item = sortedArray[i];
+        const itemHash = itemToHash(item);
+        if (!hashedItems[itemHash]) {
+            hashedItems[itemHash] = [item];
+        } else {
+            const last = hashedItems[itemHash][(hashedItems[itemHash].length - 1)];
+            if (new Date(item.time) - new Date(last.time) <= 1000 * 60) {
+                hashedItems[itemHash].push(item);
+            }
+        }
+    }
+    let result = [];
+    for (let res of Object.values(hashedItems)) {
+        result.push(res);
+    }
+    return result;
+}
+
+app.post('/task2', (req, res) => {
+    const getNewData = findDuplicateTransactions(req.body);
+
+    try {
+        res.status(200).send(getNewData);
+    }
+    catch (err) {
+        console.error(err);
+        res.sendStatus(404);
+    }
+})
 app.post('/', (req, res) => {
     try {
         console.log("Accessing index")
@@ -44,7 +139,7 @@ app.post('/', (req, res) => {
                     let action;
                     let getResult;
                     let getProductID;
-                    
+
                     if (checkBuy != -1) {
                         action = "buy";
                         getProductID = (checkBuy !== -1) ? text[checkBuy + 1] : null;

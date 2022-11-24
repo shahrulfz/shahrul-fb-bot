@@ -12,4 +12,6 @@ Then, run the development server:
 npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Use ngrok to run locally
+
+POST to /task2 by sending correct data through body
